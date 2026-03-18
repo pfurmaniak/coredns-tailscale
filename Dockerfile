@@ -1,24 +1,26 @@
-FROM golang:1.25.5-alpine3.23 AS build
+FROM golang:alpine AS build
 
 WORKDIR /go/src/coredns
 
 RUN apk add git make && \
-    git clone --depth 1 --branch=v1.13.2 https://github.com/coredns/coredns /go/src/coredns && cd plugin
+git clone --depth 1 --branch=v1.14.2 https://github.com/coredns/coredns .
 
-COPY . /go/src/coredns/plugin/tailscale
+COPY . plugin/tailscale
 
-RUN cd plugin && \
-    rm tailscale/go.mod tailscale/go.sum &&  \
-    sed -i s/forward:forward/tailscale:tailscale\\nforward:forward/ /go/src/coredns/plugin.cfg && \
-    cat /go/src/coredns/plugin.cfg && \
-    cd .. && \
+# ENV GOFLAGS="-buildvcs=false"
+RUN ls -lah plugin/tailscale && \
+    rm plugin/tailscale/go.* && \
+    sed -i s/forward:forward/tailscale:tailscale\\nforward:forward/ plugin.cfg && \
+    cat plugin.cfg && \
     make check && \
     go build
 
-FROM alpine:3.23.0
+FROM alpine:latest
+VOLUME /etc/coredns
+
 RUN apk add --no-cache ca-certificates
+COPY --from=build --chmod=755 /go/src/coredns/coredns /usr/local/bin/coredns
+COPY --chmod=644 Corefile /etc/coredns/Corefile
 
-COPY --from=build /go/src/coredns/coredns /
-COPY Corefile run.sh /
-
-ENTRYPOINT ["/run.sh"]
+EXPOSE 53/udp 53/tcp
+CMD ["coredns", "-conf", "/etc/coredns/Corefile"]

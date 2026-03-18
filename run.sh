@@ -1,6 +1,6 @@
 #!/bin/sh
 
-/coredns -conf /Corefile &
+coredns -conf /etc/coredns/Corefile &
 PIDS="$PIDS $!"
 
 for pid in $PIDS; do

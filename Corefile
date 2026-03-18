@@ -1,5 +1,7 @@
-example.com:53 {
+. {
   tailscale example.com
-  log 
+  forward . 1.1.1.1 8.8.8.8
+  log
   errors
+  cache 30
 }
