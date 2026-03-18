@@ -1,4 +1,6 @@
 lan {
+  bind tailscale0 lo
+  tailscale lan
   hosts /etc/coredns/hosts {
     fallthrough
   }
@@ -7,6 +9,7 @@ lan {
 }
 
 . {
+  bind tailscale0 lo
   forward . 1.1.1.1 8.8.8.8
   log
   errors
