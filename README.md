@@ -43,6 +43,16 @@ Tailscale
 ---------
 Note that currently this plugin uses the local machine Tailscale socket to access Tailnet information. As a result, only machines reachable from the hosting Tailscale machine will be configured in DNS. Those machines are the ones output in `tailscale status` output (and the machine itself). This was implemented to avoid the need for managing expiring Tailscale API tokens.
 
+Running
+-------
+```
+mkdir -p /opt/portainer
+git clone git@github.com:pfurmaniak/coredns-tailscale.git /opt/coredns
+cd /opt/coredns
+docker build -t coredns-tailscale:latest .
+docker compose up
+```
+
 
 TODO
 ----
