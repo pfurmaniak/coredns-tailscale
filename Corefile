@@ -1,14 +1,22 @@
-lan {
-  hosts /etc/coredns/hosts {
-    fallthrough
-  }
+(common) {
+  bind tailscale0 lo
   log
   errors
+  dump
+  cache 30
+}
+
+lan {
+  tailscale lan
+  hosts /etc/coredns/hosts {
+    fallthrough
+    reload 5m
+  }
+  import common
 }
 
 . {
   forward . 1.1.1.1 8.8.8.8
-  log
-  errors
-  cache 30
+  health :8000
+  import common
 }
