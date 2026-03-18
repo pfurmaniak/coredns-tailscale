@@ -5,7 +5,8 @@ services:
     network_mode: host
     volumes:
       - /var/run/tailscale/tailscaled.sock:/var/run/tailscale/tailscaled.sock
-      - /opt/coredns-tailscale/Corefile:/etc/coredns/Corefile
+      - /opt/coredns/Corefile:/etc/coredns/Corefile
+      - /opt/coredns/hosts:/etc/coredns/hosts
     restart: unless-stopped
   
   portainer:
