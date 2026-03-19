@@ -1,10 +1,12 @@
 FROM golang:alpine AS build
 WORKDIR /go/src/coredns
-RUN apk add git make && git clone --depth 1 --branch=v1.14.2 https://github.com/coredns/coredns .
+RUN apk add git make && \
+    git clone --depth 1 --branch=v1.14.2 https://github.com/coredns/coredns .
+
 COPY . plugin/tailscale
+COPY plugin.cfg .
 ENV GOFLAGS="-buildvcs=false"
 RUN rm plugin/tailscale/go.* && \
-    sed -i s/forward:forward/tailscale:tailscale\\nforward:forward/ plugin.cfg && \
     make check && \
     go build
 
